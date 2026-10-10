@@ -1,6 +1,10 @@
 import pytest
 
-from src.student_performance import calculate_cgpa, get_performance
+from src.student_performance import (
+    calculate_cgpa,
+    get_performance,
+    summarize_performance,
+)
 
 
 def test_calculate_cgpa():
@@ -42,3 +46,37 @@ def test_performance_categories():
 def test_invalid_cgpa():
     with pytest.raises(ValueError):
         get_performance(11.0)
+
+
+def test_summarize_performance_returns_cgpa_and_performance():
+    summary = summarize_performance([9.0, 8.5, 8.0, 9.5], [4, 3, 3, 2])
+
+    assert summary["cgpa"] == 8.71
+    assert summary["performance"] == "Excellent"
+
+
+def test_summarize_performance_with_high_cgpa():
+    summary = summarize_performance([10.0, 9.5, 9.0], [3, 3, 4])
+
+    assert summary["cgpa"] == 9.45
+    assert summary["performance"] == "Outstanding"
+
+
+def test_summarize_performance_empty_inputs_raise_value_error():
+    with pytest.raises(ValueError):
+        summarize_performance([], [])
+
+
+def test_summarize_performance_mismatched_lengths_raise_value_error():
+    with pytest.raises(ValueError):
+        summarize_performance([8.0, 9.0], [3])
+
+
+def test_summarize_performance_invalid_grade_point_raise_value_error():
+    with pytest.raises(ValueError):
+        summarize_performance([11.0], [3])
+
+
+def test_summarize_performance_invalid_credit_raise_value_error():
+    with pytest.raises(ValueError):
+        summarize_performance([8.0], [0])
